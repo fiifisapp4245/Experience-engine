@@ -87,8 +87,6 @@ export function ExperienceIntelligence() {
   }, [roamingStatus, startInvestigation]);
 
   const isInvestigating = roamingStatus === "investigating";
-  const isResolvedOrLater =
-    roamingStatus === "recommended" || roamingStatus === "accepted" || roamingStatus === "recovered";
 
   const domains: ExperienceDomainScore[] = experienceDomains.map((d) =>
     d.domain === "Roaming"
@@ -280,12 +278,6 @@ export function ExperienceIntelligence() {
             <Sparkles className="h-4 w-4 text-brand" />
             <span className="text-xs uppercase tracking-wide text-muted-foreground">AI reasoning</span>
           </div>
-          {!isResolvedOrLater && (
-            <p className="text-xs font-medium text-poor mb-3">
-              72% probability of continued degradation if unaddressed
-            </p>
-          )}
-
           {isInvestigating ? (
             <ReasoningSequence
               steps={REASONING_STEPS}
