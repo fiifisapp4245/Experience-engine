@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Loader2, Sparkles } from "lucide-react";
 import { roamingInsights } from "@/lib/mockData";
-import { statusColor, statusColorLight, statusForScore, formatScore } from "@/lib/theme";
+import { statusColor, statusForScore, formatScore } from "@/lib/theme";
 import { getRoamingScenario, roamingPartners } from "@/lib/roamingScenario";
 import { useDemoState, useDemoActions } from "@/lib/demoState";
 import { useGuidedTarget } from "@/lib/guidedTargetRegistry";
@@ -82,22 +82,20 @@ export function RoamingInsights() {
           <div className="flex-1 grid grid-cols-2 gap-3">
             {roamingPartners.map((p) => {
               const isCurrent = scenario.activePartner === p.id;
-              const status = statusForScore(p.score);
-              const tileColor =
-                status === "good" || status === "poor" ? statusColorLight[status] : statusColor[status];
+              const tileColor = statusColor[statusForScore(p.score)];
               return (
                 <div
                   key={p.id}
-                  className="rounded-[var(--radius-lg)] p-4 flex flex-col justify-center text-white"
-                  style={{ backgroundColor: tileColor }}
+                  className="rounded-[var(--radius-lg)] p-4 flex flex-col justify-center"
+                  style={{ backgroundColor: `${tileColor}1a` }}
                 >
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-white/80">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: tileColor }}>
                     {isCurrent ? "Current" : "Alternative"}
                   </span>
-                  <span className="text-sm font-medium mt-1">{p.name}</span>
-                  <span className="text-2xl font-semibold mt-1">
-                    {formatScore(p.score)}
-                    <span className="text-sm font-normal text-white/80">/5</span>
+                  <span className="text-sm font-medium mt-1 text-foreground">{p.name}</span>
+                  <span className="text-2xl font-semibold mt-1" style={{ color: tileColor }}>
+                    <NumberTransition value={p.score} from={0} format={formatScore} durationSec={1.2} />
+                    <span className="text-sm font-normal text-muted-foreground">/5</span>
                   </span>
                 </div>
               );

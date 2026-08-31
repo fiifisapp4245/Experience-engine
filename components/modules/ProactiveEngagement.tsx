@@ -56,7 +56,7 @@ export function ProactiveEngagement() {
               </div>
             </div>
 
-            <div className="flex flex-col justify-end gap-2.5 px-4 py-4 min-h-[520px] sm:min-h-[440px]">
+            <div className="flex flex-col justify-end gap-2.5 px-4 py-4 min-h-[460px] sm:min-h-[380px]">
               {proactiveEngagement.messages.map((msg, i) => (
                 <motion.div
                   key={msg.id}
