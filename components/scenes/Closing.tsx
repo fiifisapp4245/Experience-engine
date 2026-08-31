@@ -37,9 +37,10 @@ export function Closing({ onReturn }: ClosingProps) {
             cy={50}
             r={RADIUS_PERCENT}
             fill="none"
-            stroke="var(--border)"
-            strokeWidth={0.5}
-            strokeDasharray="1.6 1.6"
+            stroke="var(--brand)"
+            strokeOpacity={0.4}
+            strokeWidth={0.8}
+            strokeDasharray="1.8 1.8"
             vectorEffect="non-scaling-stroke"
           />
         </svg>
@@ -59,7 +60,7 @@ export function Closing({ onReturn }: ClosingProps) {
                 translate: "-50% -50%",
               },
               content: (
-                <span className="inline-block rounded-full bg-brand text-brand-foreground text-[11px] font-semibold px-3.5 py-2 tracking-wide whitespace-nowrap shadow-sm">
+                <span className="inline-block rounded-full bg-brand text-brand-foreground text-[11px] font-semibold px-3.5 py-2 tracking-wide whitespace-nowrap">
                   {step}
                 </span>
               ),

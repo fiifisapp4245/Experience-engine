@@ -37,7 +37,7 @@ export default function Home() {
 }
 
 function HomeShell() {
-  const { scene, activeModule } = useDemoState();
+  const { scene, activeModule, introStep } = useDemoState();
   const { setScene, setIntroStep, goToModule } = useDemoActions();
 
   // The page background (e.g. Agent Desk's gray canvas) only updates once
@@ -51,7 +51,14 @@ function HomeShell() {
   // module in order → closing → back to intro (and the reverse).
   const goBack = useCallback(() => {
     if (scene === "intro") {
-      setScene("closing");
+      // The intro has its own two steps (title → anna) before the app
+      // proper — "back" should walk through those first, same as its own
+      // internal Back button, rather than jumping straight to closing.
+      if (introStep === "anna") {
+        setIntroStep("title");
+      } else {
+        setScene("closing");
+      }
       return;
     }
     if (scene === "closing") {
@@ -66,12 +73,16 @@ function HomeShell() {
       return;
     }
     goToModule(modules[index - 1].id);
-  }, [scene, activeModule, goToModule, setIntroStep, setScene]);
+  }, [scene, introStep, activeModule, goToModule, setIntroStep, setScene]);
 
   const goForward = useCallback(() => {
     if (scene === "intro") {
-      setScene("app");
-      goToModule(modules[0].id);
+      if (introStep === "title") {
+        setIntroStep("anna");
+      } else {
+        setScene("app");
+        goToModule(modules[0].id);
+      }
       return;
     }
     if (scene === "closing") {
@@ -85,7 +96,7 @@ function HomeShell() {
       return;
     }
     goToModule(modules[index + 1].id);
-  }, [scene, activeModule, goToModule, setIntroStep, setScene]);
+  }, [scene, introStep, activeModule, goToModule, setIntroStep, setScene]);
 
   // Picking a module directly from the nav while on the intro/closing
   // screens jumps straight into the app rather than requiring a detour

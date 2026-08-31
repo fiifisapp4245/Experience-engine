@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { customer } from "@/lib/mockData";
 import { useDemoState, useDemoActions } from "@/lib/demoState";
 import { Button } from "@/components/ui/button";
+import { RevealSequence } from "@/components/motion/RevealSequence";
+
+const TITLE_LINES = ["One customer.", "One experience.", "Every moment. Every network."];
 
 type IntroProps = {
   onComplete: () => void;
@@ -36,11 +39,12 @@ export function Intro({ onComplete }: IntroProps) {
               EXPERIENCE ENGINE
             </div>
             <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground leading-tight">
-              One customer.
-              <br />
-              One experience.
-              <br />
-              Every moment. Every network.
+              <RevealSequence
+                active
+                staggerMs={260}
+                itemClassName="block"
+                items={TITLE_LINES.map((line) => ({ key: line, content: line }))}
+              />
             </h1>
             <p className="mt-6 text-lg text-brand font-medium">Driven by AI.</p>
             <p className="mt-8 text-xs text-muted-foreground uppercase tracking-widest">

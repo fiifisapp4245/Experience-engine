@@ -5,9 +5,13 @@ import { motion, AnimatePresence } from "motion/react";
 import { investmentAreas, type InvestmentArea } from "@/lib/mockData";
 import { statusColor, type ExperienceStatus } from "@/lib/theme";
 import { ModuleHeader } from "@/components/ModuleHeader";
-import { EuropeMap } from "@/components/EuropeMap";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import { cn } from "@/lib/utils";
+
+// Centered on Germany at a zoom wide enough to also show Munich↔Milan in
+// one frame — investmentAreas' x/y percentages were calibrated by hand
+// against this exact center/zoom so the markers land on their real cities.
+const MAP_EMBED_SRC = "https://maps.google.com/maps?q=49.5,10.5&z=5&output=embed";
 
 const impactStatus: Record<InvestmentArea["impact"], ExperienceStatus> = {
   High: "poor",
@@ -57,9 +61,20 @@ export function NetworkInvestmentMap() {
         description="Where degraded experience clusters geographically, and where investment is planned in response."
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-4 items-start">
-        <div className="relative glow-card aspect-square h-[calc(100vh-300px)] mx-auto overflow-hidden">
-          <EuropeMap className="absolute inset-0 h-full w-full" />
+      <div className="flex flex-col lg:flex-row items-start justify-center gap-4">
+        <div className="relative glow-card aspect-square h-[calc(100vh-300px)] overflow-hidden shrink-0">
+          <iframe
+            src={MAP_EMBED_SRC}
+            title="Map of Germany and surrounding Europe"
+            loading="lazy"
+            className="absolute inset-0 h-full w-full z-0"
+            style={{ border: 0 }}
+          />
+          {/* Sits between the map and the markers purely to swallow drags —
+              a presenter accidentally panning the live map would break the
+              hand-calibrated marker alignment. */}
+          <div className="absolute inset-0 z-[1]" aria-hidden="true" />
+
           <AnimatePresence>
             {phase === "intro" && (
               <motion.div
@@ -113,7 +128,7 @@ export function NetworkInvestmentMap() {
                   style={{ left: `${area.x}%`, top: `${area.y}%` }}
                   aria-pressed={isSelected}
                   disabled={phase !== "map"}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
+                  className="absolute z-10 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
                 >
                   <span
                     className="absolute rounded-full animate-pulse"
@@ -148,7 +163,7 @@ export function NetworkInvestmentMap() {
           </motion.div>
         </div>
 
-        <div className="glow-card p-5 min-h-[220px]">
+        <div className="glow-card p-5 w-full lg:w-[320px] shrink-0 min-h-[220px]">
           <AnimatePresence mode="wait">
             {phase === "intro" ? (
               <div
