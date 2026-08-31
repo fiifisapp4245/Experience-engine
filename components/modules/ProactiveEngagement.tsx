@@ -111,7 +111,7 @@ export function ProactiveEngagement() {
           Customer Journey Map's detail panel: fixed beside the phone so it
           never affects the phone's own centering, with a bottom-card
           fallback below the lg breakpoint. */}
-      <div className="fixed right-6 md:right-10 top-1/2 -translate-y-1/2 z-30 w-72 hidden lg:block pointer-events-none">
+      <div className="fixed left-[calc(50%+174px)] top-1/2 -translate-y-1/2 z-30 w-72 hidden lg:block pointer-events-none">
         <AnimatePresence>
           {isDone && (
             <motion.div
