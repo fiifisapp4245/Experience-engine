@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { motion } from "motion/react";
 import { useReducedMotion } from "./useReducedMotion";
 
-export type RevealItem = { key: string; content: React.ReactNode };
+export type RevealItem = { key: string; content: React.ReactNode; style?: React.CSSProperties };
 
 type RevealSequenceProps = {
   items: RevealItem[];
@@ -54,6 +54,7 @@ export function RevealSequence({
             duration: reducedMotion ? 0.01 : 0.32,
           }}
           className={itemClassName}
+          style={item.style}
         >
           {item.content}
         </motion.div>

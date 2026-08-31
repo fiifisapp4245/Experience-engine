@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { investmentAreas, type InvestmentArea } from "@/lib/mockData";
 import { statusColor, type ExperienceStatus } from "@/lib/theme";
 import { ModuleHeader } from "@/components/ModuleHeader";
+import { EuropeMap } from "@/components/EuropeMap";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -56,15 +57,9 @@ export function NetworkInvestmentMap() {
         description="Where degraded experience clusters geographically, and where investment is planned in response."
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6">
-        <div
-          className="relative glow-card aspect-[4/3] overflow-hidden"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(20,24,43,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(20,24,43,0.06) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        >
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-4 items-start">
+        <div className="relative glow-card aspect-square h-[calc(100vh-300px)] mx-auto overflow-hidden">
+          <EuropeMap className="absolute inset-0 h-full w-full" />
           <AnimatePresence>
             {phase === "intro" && (
               <motion.div

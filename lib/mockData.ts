@@ -432,8 +432,8 @@ export const investmentAreas: InvestmentArea[] = [
     investment: "€2.4M — small cell density upgrade",
     aiRecommendation: "Prioritise small-cell density upgrade.",
     expectedImpact: { scoreDelta: "+16%", churnDelta: "-9%", revenue: "€900K" },
-    x: 32,
-    y: 38,
+    x: 52,
+    y: 68,
   },
   {
     id: "area-2",
@@ -446,8 +446,8 @@ export const investmentAreas: InvestmentArea[] = [
     investment: "€1.6M — network expansion",
     aiRecommendation: "Prioritise network expansion.",
     expectedImpact: { scoreDelta: "+18%", churnDelta: "-12%", revenue: "€1.2M" },
-    x: 63,
-    y: 48,
+    x: 51,
+    y: 50,
   },
   {
     id: "area-3",
@@ -460,8 +460,8 @@ export const investmentAreas: InvestmentArea[] = [
     investment: "€850K — backhaul capacity increase",
     aiRecommendation: "Monitor; moderate backhaul upgrade.",
     expectedImpact: { scoreDelta: "+9%", churnDelta: "-5%", revenue: "€480K" },
-    x: 58,
-    y: 58,
+    x: 48,
+    y: 53,
   },
   {
     id: "area-4",
@@ -474,8 +474,8 @@ export const investmentAreas: InvestmentArea[] = [
     investment: "Monitoring only — no action planned",
     aiRecommendation: "No action needed — within acceptable range.",
     expectedImpact: { scoreDelta: "+2%", churnDelta: "-1%", revenue: "€60K" },
-    x: 74,
-    y: 22,
+    x: 45,
+    y: 24,
   },
   {
     id: "area-5",
@@ -488,7 +488,7 @@ export const investmentAreas: InvestmentArea[] = [
     investment: "€1.9M — new macro sites",
     aiRecommendation: "Prioritise new macro sites.",
     expectedImpact: { scoreDelta: "+14%", churnDelta: "-8%", revenue: "€1.0M" },
-    x: 46,
-    y: 70,
+    x: 55,
+    y: 33,
   },
 ];

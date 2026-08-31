@@ -46,10 +46,19 @@ function HomeShell() {
   // sitting on the new module's background for a moment.
   const [bgTarget, setBgTarget] = useState(activeModule);
 
-  // Stepping "back" off the first module returns to the Meet Anna intro
-  // step (the true previous screen in the pitch), rather than wrapping
-  // around to the last module.
+  // The bottom nav is mounted for the whole pitch — intro and closing
+  // included — so "back"/"forward" form one continuous loop: intro → every
+  // module in order → closing → back to intro (and the reverse).
   const goBack = useCallback(() => {
+    if (scene === "intro") {
+      setScene("closing");
+      return;
+    }
+    if (scene === "closing") {
+      setScene("app");
+      goToModule(modules[modules.length - 1].id);
+      return;
+    }
     const index = modules.findIndex((m) => m.id === activeModule);
     if (index === 0) {
       setIntroStep("anna");
@@ -57,79 +66,105 @@ function HomeShell() {
       return;
     }
     goToModule(modules[index - 1].id);
-  }, [activeModule, goToModule, setIntroStep, setScene]);
+  }, [scene, activeModule, goToModule, setIntroStep, setScene]);
 
   const goForward = useCallback(() => {
+    if (scene === "intro") {
+      setScene("app");
+      goToModule(modules[0].id);
+      return;
+    }
+    if (scene === "closing") {
+      setIntroStep("title");
+      setScene("intro");
+      return;
+    }
     const index = modules.findIndex((m) => m.id === activeModule);
-    const nextIndex = (index + 1) % modules.length;
-    goToModule(modules[nextIndex].id);
-  }, [activeModule, goToModule]);
+    if (index === modules.length - 1) {
+      setScene("closing");
+      return;
+    }
+    goToModule(modules[index + 1].id);
+  }, [scene, activeModule, goToModule, setIntroStep, setScene]);
 
-  // Arrow-key navigation only applies once inside the app shell. (A real
-  // arrow-key press during guided playback also interrupts it — see the
-  // capture-phase listener in GuidedCursor, which fires first.)
+  // Picking a module directly from the nav while on the intro/closing
+  // screens jumps straight into the app rather than requiring a detour
+  // through "Start Experience" first.
+  const selectModule = useCallback(
+    (id: ModuleId) => {
+      if (scene !== "app") setScene("app");
+      goToModule(id);
+    },
+    [scene, goToModule, setScene]
+  );
+
+  // Arrow-key navigation mirrors the nav — available on every screen. (A
+  // real arrow-key press during guided playback also interrupts it — see
+  // the capture-phase listener in GuidedCursor, which fires first.)
   useEffect(() => {
-    if (scene !== "app") return;
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "ArrowRight") goForward();
       if (e.key === "ArrowLeft") goBack();
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [scene, goBack, goForward]);
-
-  if (scene === "intro") {
-    return <Intro onComplete={() => setScene("app")} />;
-  }
-
-  if (scene === "closing") {
-    return <Closing onReturn={() => setScene("app")} />;
-  }
+  }, [goBack, goForward]);
 
   const ActiveModule = moduleComponents[activeModule];
 
   return (
     <div className="min-h-screen w-full">
-      <button
-        type="button"
-        onClick={() => {
-          setIntroStep("title");
-          setScene("intro");
-        }}
-        title="Return to the opening screen"
-        className="fixed top-4 left-4 md:top-6 md:left-6 z-30 text-sm font-medium tracking-wide text-brand hover:opacity-80 transition-opacity"
-      >
-        EXPERIENCE ENGINE
-      </button>
+      {scene === "app" && (
+        <button
+          type="button"
+          onClick={() => {
+            setIntroStep("title");
+            setScene("intro");
+          }}
+          title="Return to the opening screen"
+          className="fixed top-4 left-4 md:top-6 md:left-6 z-30 text-sm font-medium tracking-wide text-brand hover:opacity-80 transition-opacity"
+        >
+          EXPERIENCE ENGINE
+        </button>
+      )}
 
-      <main
-        className={cn(
-          "min-h-screen overflow-y-auto px-4 md:px-8 lg:px-10 pt-12 md:pt-14 pb-32",
-          (bgTarget === "agent-desk" ||
-            bgTarget === "experience-intelligence" ||
-            bgTarget === "roaming-insights" ||
-            bgTarget === "proactive-engagement") &&
-            "bg-muted"
-        )}
-      >
-        <div className="mx-auto w-full max-w-6xl">
-          <AnimatePresence mode="wait" onExitComplete={() => setBgTarget(activeModule)}>
-            <motion.div
-              key={activeModule}
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -12 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-            >
-              <ActiveModule />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </main>
+      {scene === "intro" && <Intro onComplete={() => setScene("app")} />}
+      {scene === "closing" && <Closing onReturn={() => setScene("app")} />}
 
-      <BottomNav active={activeModule} onSelect={goToModule} onPrev={goBack} onNext={goForward} />
-      <GuidedCursor />
-      <PresentationControls />
+      {scene === "app" && (
+        <main
+          className={cn(
+            "min-h-screen overflow-y-auto px-4 md:px-8 lg:px-10 pt-12 md:pt-14 pb-32",
+            (bgTarget === "agent-desk" ||
+              bgTarget === "experience-intelligence" ||
+              bgTarget === "roaming-insights" ||
+              bgTarget === "proactive-engagement") &&
+              "bg-muted"
+          )}
+        >
+          <div className="mx-auto w-full max-w-6xl">
+            <AnimatePresence mode="wait" onExitComplete={() => setBgTarget(activeModule)}>
+              <motion.div
+                key={activeModule}
+                initial={{ opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -12 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+              >
+                <ActiveModule />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </main>
+      )}
+
+      <BottomNav active={activeModule} onSelect={selectModule} onPrev={goBack} onNext={goForward} />
+      {scene === "app" && (
+        <>
+          <GuidedCursor />
+          <PresentationControls />
+        </>
+      )}
     </div>
   );
 }
