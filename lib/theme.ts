@@ -42,6 +42,12 @@ export const statusColor: Record<ExperienceStatus, string> = {
   info: colors.info,
 };
 
+/** Lighter tints of the good/poor statuses, for solid-fill tiles where the full-strength color reads as too heavy. */
+export const statusColorLight: Record<"good" | "poor", string> = {
+  good: "#4ade80",
+  poor: "#f87171",
+};
+
 export const statusLabel: Record<ExperienceStatus, string> = {
   good: "Good",
   warning: "Degraded",

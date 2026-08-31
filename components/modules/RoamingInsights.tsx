@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Loader2, Sparkles } from "lucide-react";
 import { roamingInsights } from "@/lib/mockData";
-import { statusColor, statusForScore, formatScore } from "@/lib/theme";
+import { statusColor, statusColorLight, statusForScore, formatScore } from "@/lib/theme";
 import { getRoamingScenario, roamingPartners } from "@/lib/roamingScenario";
 import { useDemoState, useDemoActions } from "@/lib/demoState";
 import { useGuidedTarget } from "@/lib/guidedTargetRegistry";
@@ -43,7 +43,7 @@ export function RoamingInsights() {
         description={`${roamingInsights.location} — what went wrong, and what the engine recommends doing about it.`}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 gap-4 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 gap-4 items-stretch max-w-3xl w-full mx-auto">
         {/* Row 1 */}
         <div className={`${CARD} p-6 flex flex-col items-center justify-center`}>
           <svg viewBox="0 0 200 120" className="w-full max-w-xs">
@@ -67,7 +67,7 @@ export function RoamingInsights() {
           </svg>
           <div className="-mt-10 flex flex-col items-center">
             <span className="text-4xl font-semibold" style={{ color }}>
-              <NumberTransition value={scenario.score} format={formatScore} />
+              <NumberTransition value={scenario.score} from={0} format={formatScore} durationSec={1.2} />
             </span>
             <span className="text-sm text-muted-foreground">
               /5 · {isDone ? "Good" : "Poor"}
@@ -82,7 +82,9 @@ export function RoamingInsights() {
           <div className="flex-1 grid grid-cols-2 gap-3">
             {roamingPartners.map((p) => {
               const isCurrent = scenario.activePartner === p.id;
-              const tileColor = statusColor[statusForScore(p.score)];
+              const status = statusForScore(p.score);
+              const tileColor =
+                status === "good" || status === "poor" ? statusColorLight[status] : statusColor[status];
               return (
                 <div
                   key={p.id}
