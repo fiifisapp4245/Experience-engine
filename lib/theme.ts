@@ -5,7 +5,7 @@
  */
 
 export const colors = {
-  background: "#f5f6fa",
+  background: "#ffffff",
   surface: "#ffffff",
   surfaceRaised: "#ffffff",
   card: "#ffffff",
@@ -48,3 +48,15 @@ export const statusLabel: Record<ExperienceStatus, string> = {
   poor: "Poor",
   info: "Engine action",
 };
+
+/**
+ * Single shared score→status mapping. Every module that renders a 0–5
+ * experience score (Journey Map, Agent Desk, Roaming Insights, Experience
+ * Intelligence) must use this instead of a local threshold function, or the
+ * same score will render as a different status in different places.
+ */
+export function statusForScore(score: number): ExperienceStatus {
+  if (score >= 3.75) return "good";
+  if (score >= 2.75) return "warning";
+  return "poor";
+}

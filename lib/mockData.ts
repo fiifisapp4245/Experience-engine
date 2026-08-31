@@ -3,15 +3,19 @@ import {
   Compass,
   Clock,
   Headset,
+  Brain,
   Radar,
   Plane,
   MessageSquare,
   MapPin,
   Wifi,
-  Tv,
   Smartphone,
   Receipt,
   PhoneCall,
+  AlertTriangle,
+  Lightbulb,
+  CheckCircle2,
+  TrendingUp,
 } from "lucide-react";
 import type { ExperienceStatus } from "@/lib/theme";
 
@@ -21,7 +25,11 @@ import type { ExperienceStatus } from "@/lib/theme";
 
 export const customer = {
   name: "Anna",
+  fullName: "Anna Müller",
   initials: "A",
+  age: 34,
+  city: "Munich",
+  lifestyle: "Works hybrid, loves to travel",
   segment: "MagentaEINS Premium",
   tenureYears: 4,
 } as const;
@@ -39,22 +47,27 @@ export type ModuleId =
   | "proactive-engagement"
   | "network-investment-map";
 
+export type ModuleGroup = "UNDERSTAND" | "INTELLIGENCE" | "ACT" | "SCALE";
+
 export type ModuleMeta = {
   id: ModuleId;
   number: number;
   label: string;
   shortLabel: string;
   icon: LucideIcon;
+  group: ModuleGroup;
 };
 
+// Nav order stays flat/numeric (goToOffset in app/page.tsx cycles this array
+// directly) — `group` only affects how BottomNav visually clusters items.
 export const modules: ModuleMeta[] = [
-  { id: "journey-map", number: 1, label: "Customer Journey Map", shortLabel: "Journey", icon: Compass },
-  { id: "experience-timeline", number: 2, label: "Experience Timeline", shortLabel: "Timeline", icon: Clock },
-  { id: "agent-desk", number: 3, label: "Agent Desk — 360° View", shortLabel: "Agent Desk", icon: Headset },
-  { id: "experience-intelligence", number: 4, label: "Experience Intelligence", shortLabel: "Intelligence", icon: Radar },
-  { id: "roaming-insights", number: 5, label: "Roaming Insights", shortLabel: "Roaming", icon: Plane },
-  { id: "proactive-engagement", number: 6, label: "Proactive Engagement", shortLabel: "Engagement", icon: MessageSquare },
-  { id: "network-investment-map", number: 7, label: "Network Investment Map", shortLabel: "Investment", icon: MapPin },
+  { id: "journey-map", number: 1, label: "Customer Journey Map", shortLabel: "Journey", icon: Compass, group: "UNDERSTAND" },
+  { id: "experience-timeline", number: 2, label: "Experience Timeline", shortLabel: "Timeline", icon: Clock, group: "UNDERSTAND" },
+  { id: "agent-desk", number: 3, label: "Agent Desk — 360° View", shortLabel: "Agent Desk", icon: Headset, group: "UNDERSTAND" },
+  { id: "experience-intelligence", number: 4, label: "Experience Intelligence", shortLabel: "Intelligence", icon: Brain, group: "INTELLIGENCE" },
+  { id: "roaming-insights", number: 5, label: "Roaming Insights", shortLabel: "Roaming", icon: Plane, group: "INTELLIGENCE" },
+  { id: "proactive-engagement", number: 6, label: "Proactive Engagement", shortLabel: "Engagement", icon: MessageSquare, group: "ACT" },
+  { id: "network-investment-map", number: 7, label: "Network Investment Map", shortLabel: "Investment", icon: MapPin, group: "SCALE" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -64,7 +77,8 @@ export const modules: ModuleMeta[] = [
 export type JourneyTouchpoint = {
   id: string;
   label: string;
-  icon: LucideIcon;
+  iconSrc: string;
+  color: string;
   status: ExperienceStatus;
   score: number;
   summary: string;
@@ -75,7 +89,8 @@ export const journeyTouchpoints: JourneyTouchpoint[] = [
   {
     id: "home-wifi",
     label: "Home WiFi",
-    icon: Wifi,
+    iconSrc: "/touchpoints/home-wifi.svg",
+    color: "#337B10",
     status: "warning",
     score: 3.7,
     summary: "Slight signal degradation in the evening — likely channel congestion.",
@@ -88,7 +103,8 @@ export const journeyTouchpoints: JourneyTouchpoint[] = [
   {
     id: "magenta-tv",
     label: "MagentaTV",
-    icon: Tv,
+    iconSrc: "/touchpoints/magenta-tv.svg",
+    color: "#E20074",
     status: "good",
     score: 4.6,
     summary: "Stable streaming quality, no buffering events this week.",
@@ -101,7 +117,8 @@ export const journeyTouchpoints: JourneyTouchpoint[] = [
   {
     id: "service",
     label: "Service",
-    icon: Headset,
+    iconSrc: "/touchpoints/service.svg",
+    color: "#6A47C1",
     status: "warning",
     score: 3.4,
     summary: "One open ticket from a billing question, resolved same day.",
@@ -114,7 +131,8 @@ export const journeyTouchpoints: JourneyTouchpoint[] = [
   {
     id: "mobile",
     label: "Mobile",
-    icon: Smartphone,
+    iconSrc: "/touchpoints/mobile.svg",
+    color: "#105492",
     status: "good",
     score: 4.7,
     summary: "Excellent network experience across all recent sessions.",
@@ -127,7 +145,8 @@ export const journeyTouchpoints: JourneyTouchpoint[] = [
   {
     id: "tariff-billing",
     label: "Tariff & Billing",
-    icon: Receipt,
+    iconSrc: "/touchpoints/tariff-billing.svg",
+    color: "#705204",
     status: "info",
     score: 4.3,
     summary: "Anna switched to a new tariff today — engine flagged it as a fit upgrade.",
@@ -140,7 +159,8 @@ export const journeyTouchpoints: JourneyTouchpoint[] = [
   {
     id: "roaming",
     label: "Roaming",
-    icon: Plane,
+    iconSrc: "/touchpoints/roaming.svg",
+    color: "#3D184D",
     status: "poor",
     score: 2.4,
     summary: "Poor experience in Italy last night — high latency and packet loss.",
@@ -221,22 +241,72 @@ export const timelineEvents: TimelineEvent[] = [
   {
     id: "evt-6",
     time: "21:10",
-    title: "Roaming Italy — poor experience",
+    title: "Anna enters Italy",
     category: "Roaming",
-    status: "poor",
-    description: "High latency and packet loss detected on partner network in Milan.",
+    status: "warning",
+    description: "Device switches to a roaming partner network in Milan.",
     icon: Plane,
-    sparkline: [3.6, 3.3, 2.9, 2.6, 2.5, 2.3, 2.4],
+    sparkline: [4.0, 3.8, 3.6, 3.4, 3.2, 3.0, 2.9],
   },
   {
     id: "evt-7",
-    time: "22:30",
-    title: "Proactive support",
+    time: "21:15",
+    title: "Roaming degradation detected",
+    category: "Roaming",
+    status: "poor",
+    description: "High latency and packet loss on Partner Network A.",
+    icon: AlertTriangle,
+    sparkline: [2.9, 2.7, 2.5, 2.4, 2.4, 2.3, 2.4],
+  },
+  {
+    id: "evt-8",
+    time: "21:18",
+    title: "AI identifies poor partner performance",
     category: "Roaming",
     status: "info",
-    description: "Engine detected the degradation and triggered outreach before Anna complained.",
+    description: "Engine correlates the drop with Partner A's network telemetry in this area.",
+    icon: Radar,
+    sparkline: [2.4, 2.4, 2.4, 2.4, 2.4, 2.4, 2.4],
+  },
+  {
+    id: "evt-9",
+    time: "21:20",
+    title: "Alternative partner recommended",
+    category: "Roaming",
+    status: "info",
+    description: "Partner Network B is performing significantly better nearby.",
+    icon: Lightbulb,
+    sparkline: [2.4, 2.4, 2.5, 2.5, 2.6, 2.6, 2.6],
+  },
+  {
+    id: "evt-10",
+    time: "21:22",
+    title: "Proactive message sent",
+    category: "Roaming",
+    status: "info",
+    description: "Anna is offered a network switch before she has to complain.",
     icon: PhoneCall,
-    sparkline: [2.4, 2.5, 2.8, 3.0, 3.2, 3.3, 3.4],
+    sparkline: [2.6, 2.6, 2.7, 2.7, 2.8, 2.8, 2.9],
+  },
+  {
+    id: "evt-11",
+    time: "21:24",
+    title: "Anna accepts",
+    category: "Roaming",
+    status: "good",
+    description: "One tap — Anna approves the switch to Partner Network B.",
+    icon: CheckCircle2,
+    sparkline: [2.9, 3.2, 3.5, 3.7, 3.9, 4.0, 4.0],
+  },
+  {
+    id: "evt-12",
+    time: "21:25",
+    title: "Experience recovered",
+    category: "Roaming",
+    status: "good",
+    description: "Latency and packet loss back to normal on Partner Network B.",
+    icon: TrendingUp,
+    sparkline: [3.8, 3.9, 4.0, 4.0, 4.1, 4.1, 4.1],
   },
 ];
 
@@ -294,24 +364,14 @@ export const experienceIntelligenceSummary = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Module 5 — Roaming Insights — stub content
+// Module 5 — Roaming Insights
 // ---------------------------------------------------------------------------
+// Anna's own score/status/latency/recommendation for this incident are
+// derived live from `roamingStatus` via `lib/roamingScenario.ts` — this is
+// just the static context that doesn't change with her resolution state.
 
 export const roamingInsights = {
-  score: 2.4,
-  label: "Poor",
   location: "Milan, Italy",
-  issues: [
-    { label: "Latency", value: "310 ms", status: "poor" as ExperienceStatus },
-    { label: "Packet loss", value: "6.2%", status: "poor" as ExperienceStatus },
-    { label: "Throughput", value: "4.1 Mbps", status: "warning" as ExperienceStatus },
-  ],
-  partners: [
-    { name: "Partner Network A", status: "Poor" as const },
-    { name: "Partner Network B", status: "Good" as const },
-  ],
-  recommendation:
-    "Switch Anna to Partner Network B and offer a complimentary roaming data pass to offset the degraded session.",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -349,14 +409,86 @@ export type InvestmentArea = {
   name: string;
   impact: "High" | "Medium" | "Low";
   customers: number;
+  poorExperienceCustomers: number;
+  experienceGapPercent: number;
+  revenueImpact: string;
   investment: string;
+  aiRecommendation: string;
+  expectedImpact: { scoreDelta: string; churnDelta: string; revenue: string };
   x: number;
   y: number;
 };
 
+// Illustrative prototype data — not real Telekom network or customer figures.
 export const investmentAreas: InvestmentArea[] = [
-  { id: "area-1", name: "Milan Central", impact: "High", customers: 18400, investment: "€2.4M — small cell density upgrade", x: 32, y: 38 },
-  { id: "area-2", name: "Munich South", impact: "Medium", customers: 9200, investment: "€850K — backhaul capacity increase", x: 58, y: 55 },
-  { id: "area-3", name: "Hamburg Port", impact: "Low", customers: 3100, investment: "Monitoring only — no action planned", x: 74, y: 22 },
-  { id: "area-4", name: "Berlin East", impact: "High", customers: 15600, investment: "€1.9M — new macro sites", x: 46, y: 70 },
+  {
+    id: "area-1",
+    name: "Milan Central",
+    impact: "High",
+    customers: 18400,
+    poorExperienceCustomers: 6200,
+    experienceGapPercent: -24,
+    revenueImpact: "€1.1M",
+    investment: "€2.4M — small cell density upgrade",
+    aiRecommendation: "Prioritise small-cell density upgrade.",
+    expectedImpact: { scoreDelta: "+16%", churnDelta: "-9%", revenue: "€900K" },
+    x: 32,
+    y: 38,
+  },
+  {
+    id: "area-2",
+    name: "Munich East",
+    impact: "High",
+    customers: 12400,
+    poorExperienceCustomers: 3200,
+    experienceGapPercent: -28,
+    revenueImpact: "€420K",
+    investment: "€1.6M — network expansion",
+    aiRecommendation: "Prioritise network expansion.",
+    expectedImpact: { scoreDelta: "+18%", churnDelta: "-12%", revenue: "€1.2M" },
+    x: 63,
+    y: 48,
+  },
+  {
+    id: "area-3",
+    name: "Munich South",
+    impact: "Medium",
+    customers: 9200,
+    poorExperienceCustomers: 2100,
+    experienceGapPercent: -14,
+    revenueImpact: "€310K",
+    investment: "€850K — backhaul capacity increase",
+    aiRecommendation: "Monitor; moderate backhaul upgrade.",
+    expectedImpact: { scoreDelta: "+9%", churnDelta: "-5%", revenue: "€480K" },
+    x: 58,
+    y: 58,
+  },
+  {
+    id: "area-4",
+    name: "Hamburg Port",
+    impact: "Low",
+    customers: 3100,
+    poorExperienceCustomers: 420,
+    experienceGapPercent: -6,
+    revenueImpact: "€60K",
+    investment: "Monitoring only — no action planned",
+    aiRecommendation: "No action needed — within acceptable range.",
+    expectedImpact: { scoreDelta: "+2%", churnDelta: "-1%", revenue: "€60K" },
+    x: 74,
+    y: 22,
+  },
+  {
+    id: "area-5",
+    name: "Berlin East",
+    impact: "High",
+    customers: 15600,
+    poorExperienceCustomers: 4800,
+    experienceGapPercent: -21,
+    revenueImpact: "€780K",
+    investment: "€1.9M — new macro sites",
+    aiRecommendation: "Prioritise new macro sites.",
+    expectedImpact: { scoreDelta: "+14%", churnDelta: "-8%", revenue: "€1.0M" },
+    x: 46,
+    y: 70,
+  },
 ];

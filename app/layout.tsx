@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { MotionConfig } from "motion/react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
@@ -26,7 +27,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <TooltipProvider delay={150}>{children}</TooltipProvider>
+        <MotionConfig reducedMotion="user">
+          <TooltipProvider delay={150}>{children}</TooltipProvider>
+        </MotionConfig>
       </body>
     </html>
   );

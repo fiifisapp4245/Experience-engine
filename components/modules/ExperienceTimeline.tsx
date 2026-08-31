@@ -13,6 +13,7 @@ export function ExperienceTimeline() {
       <div className="max-w-3xl mx-auto w-full">
         <ModuleHeader
           number={2}
+          section="UNDERSTAND"
           title="Experience Timeline"
           description={`A day in ${customer.name}'s experience — every notable event, in order, with the engine's read on each one.`}
         />
@@ -24,9 +25,9 @@ export function ExperienceTimeline() {
             return (
               <motion.li
                 key={event.id}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.25, delay: i * 0.04 }}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.15, ease: "easeOut" }}
                 className="glow-card p-4 flex flex-col sm:flex-row sm:items-center gap-3"
               >
                 <div className="flex-1 min-w-0">

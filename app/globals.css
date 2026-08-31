@@ -94,7 +94,7 @@
   can't read TS, so the hex values are duplicated once by design.
 */
 :root {
-  --background: #f5f6fa;
+  --background: #ffffff;
   --foreground: #14182b;
   --surface: #ffffff;
   --surface-raised: #ffffff;
